@@ -1,29 +1,99 @@
 # Documenting Koovak's key API endpoints
 
-### - To get an user's global leaderboards rank
-*(replace "MattyOW" with the user you're searching for)*  
+This is part of a project to help [@VoltaicHQ](https://github.com/VoltaicHQ) develop Voltaic Season 3  
+Due to the lack of a public API reference for Koovak's, I had to sniff requests to document these key endpoints
+
+## API Endpoints
+
+### 1. Get a User's Global Leaderboards Rank
+- This endpoint allows you to retrieve the global leaderboard rank for a specific user  
+- This is useful for tracking a player's overall performance and ranking in the game
+
+**Example Request:**
+
 https://kovaaks.com/webapp-backend/leaderboard/global/search/account-names?username=MattyOW
 
+**Parameters:**
+- `username`: The username of the player whose rank you want to find. Replace "MattyOW" with the desired username.
+
+**Example Response:**
+```json
+{
+  "status": "success",
+  "data": [
+    {
+      "username": "MattyOW",
+      "rank": 42,
+      "score": 123456
+    }
+  ]
+}
+```
+
 ---
 
-### - To find a specific scenario
-#### Notes:
-- **This endpoint is crucial because the "leaderboardId" parameter is required to find a specific player's data within the retrieved scenario later on**  
-- The order in which scenarios are returned when queried is determined by the number of entries for each scenario (most played to lowest)  
-- Scenarios with a greater number of plays will be fetched and returned first  
-- If the provided scenario name does not exactly match the available scenarios, the API will return the closest, most played scenario that contains the requested keywords  
-- The example provided limits the return list to 1 result, but this can be adjusted by modifying the "max=1" parameter  
+### 2. Find a Specific Scenario
+- This endpoint helps you find scenarios by name
+- It is crucial because the leaderboardId parameter obtained here is required to fetch a specific player's data within that scenario
 
-*(replace "PASU+VOLTAIC+INTERMEDIATE" with the scenario you're searching for)*  
+**Example Request:**
+
 https://kovaaks.com/webapp-backend/scenario/popular?page=0&max=1&scenarioNameSearch=PASU+VOLTAIC+INTERMEDIATE
 
+**Parameters:**
+
+- `page`: The page number to retrieve (pagination)
+- `max`: The maximum number of results to return (Adjust this number as needed)
+- `scenarioNameSearch`: The name of the scenario you are searching for -- Replace "PASU+VOLTAIC+INTERMEDIATE" with the desired scenario name
+
+**Example Response:**
+```json
+{
+  "status": "success",
+  "data": [
+    {
+      "scenarioId": 10618,
+      "scenarioName": "PASU VOLTAIC INTERMEDIATE",
+      "plays": 98765
+    }
+  ]
+}
+```
+
 ---
 
-### To find a specific player's data in a scenario (best score, game version, settings...)
-#### Notes:
-- After retrieving the desired scenario using the previous API endpoint, you can then use the "leaderboardId" parameter to fetch a specific player's data within that scenario  
-- In the example URL provided, replace "10618" with the "leaderboardId" of the scenario you want to search, and replace "selene" with the username of the player you're looking for  
+### 3. Find a Specific Player's Data in a Scenario
 
+- This endpoint retrieves detailed data for a specific player within a scenario, including their best score, game version, and settings
+
+
+**Example Request:**
 https://kovaaks.com/webapp-backend/leaderboard/scores/global?leaderboardId=10618&page=0&max=1&usernameSearch=selene
 
-###
+**Parameters:**
+
+- `leaderboardId`: The ID of the scenario's leaderboard obtained from the previous endpoint
+- `page`: The page number to retrieve (pagination)
+- `max`: The maximum number of results to return. Adjust this number as needed
+- `usernameSearch`: The username of the player whose data you want to retrieve. Replace "selene" with the desired username
+
+
+**Example Response:**
+```json
+{
+  "status": "success",
+  "data": [
+    {
+      "username": "selene",
+      "score": 654321,
+      "gameVersion": "1.2.3",
+      "settings": {
+        "sensitivity": 3.5,
+        "FOV": 103
+      }
+    }
+  ]
+}
+```
+
+---
